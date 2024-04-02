@@ -1,13 +1,13 @@
 import streamlit as st
 from gtts import gTTS
-import os
+from io import BytesIO
 
 def speak_text(text):
     """Converts the given text to speech."""
     tts = gTTS(text=text, lang='en')  # Create a gTTS object for English
-    filename = 'temp_audio.mp3'  # Temporary file to save audio
-    tts.save(filename)  # Save the spoken text to a file
-    return filename
+    audio_file = BytesIO()
+    tts.write_to_fp(audio_file)
+    return audio_file
 
 def pig_latin_text(phrase):
     vowels = "aeiouAEIOU"
@@ -81,17 +81,13 @@ st.set_page_config(
 )
 
 st.title('Pig Latin Converter')
-user_input = st.text_area("Enter English test you want to convert to normal speech:", "Hello world")
+user_input = st.text_area("Enter English text you want to convert to normal speech:", "Hello world")
 
 if st.button('Speak'):
     st.write("Pig Latin...")
     pigLatin = pig_latin(user_input)
     audio_file = speak_text(pigLatin)
-    audio_file_opened = open(audio_file, 'rb')
-    audio_bytes = audio_file_opened.read()
-    st.audio(audio_bytes, format='audio/mp3', start_time=0)#, autoplay=True, controls=False)
+    st.audio(audio_file.read(), format='audio/mp3', start_time=0)#, autoplay=True, controls=False)
     
-    pig_latin_text = pig_latin_text(user_input)
-    st.write("Pig Latin Phrase:", pig_latin_text)
-    
-    os.remove(audio_file)  # Clean up the temporary file after use
+    pig_latin_text_output = pig_latin_text(user_input)
+    st.write("Pig Latin Phrase:", pig_latin_text_output)
