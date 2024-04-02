@@ -78,7 +78,6 @@ def pig_latin(phrase):
 # Streamlit UI
 st.set_page_config(
     page_title="Pig Latin",
-    page_icon="🔊"
 )
 
 st.title('Pig Latin Converter')
